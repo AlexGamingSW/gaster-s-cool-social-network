@@ -154,7 +154,7 @@ function Lib:updateWorld(...)
                 end
             end
         elseif data.command == "audio" then
-            local receivedSoundData = love.sound.newSoundData(love.filesystem.newFileData(data, "audio"))
+            local receivedSoundData = love.sound.newSoundData(love.filesystem.newFileData(data.message, "audio"))
         
             -- Lire les données reçues
             local source = love.audio.newQueueableSource(44100, 16, 1)
@@ -204,11 +204,13 @@ function Lib:updateWorld(...)
         -- Convertir les données audio en chaîne de caractères
         local audioDataString = soundData:getString()
 
-        -- Envoyer les données audio au serveur
-        sendToServer(client, JSON.encode({
+        local playerAudio = {
             command = "audio",
-            message = audioDataString})
-        )
+            message = audioDataString
+        }
+
+        -- Envoyer les données audio au serveur
+        sendToServer(client, playerAudio)
     end
 end
 
