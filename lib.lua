@@ -153,8 +153,9 @@ function Lib:updateWorld(...)
                     self.other_players[uuid] = nil
                 end
             end
-        elseif data.command == "audio" then
-            local receivedSoundData = love.sound.newSoundData(love.filesystem.newFileData(data.message, "audio"))
+        elseif data.command == "receivedAudio" then
+            print("here")
+            local receivedSoundData = love.sound.newSoundData(love.filesystem.newFileData(data.audio, "audio"))
         
             -- Lire les données reçues
             local source = love.audio.newQueueableSource(44100, 16, 1)
@@ -199,17 +200,11 @@ function Lib:updateWorld(...)
     end
 
     if self.recordingDevice:getSampleCount() >= 1024 then
-        local soundData = self.recordingDevice:getData(1024)
-
-        -- Convertir les données audio en chaîne de caractères
-        local audioDataString = soundData:getString()
-
         local playerAudio = {
             command = "audio",
-            message = audioDataString
+            audio = self.recordingDevice:getData(1024):getString()
         }
 
-        -- Envoyer les données audio au serveur
         sendToServer(client, playerAudio)
     end
 end
