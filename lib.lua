@@ -153,7 +153,7 @@ function Lib:updateWorld(...)
                     self.other_players[uuid] = nil
                 end
             end
-        else
+        elseif data.command == "audio" then
             local receivedSoundData = love.sound.newSoundData(love.filesystem.newFileData(data, "audio"))
         
             -- Lire les données reçues
@@ -205,7 +205,10 @@ function Lib:updateWorld(...)
         local audioDataString = soundData:getString()
 
         -- Envoyer les données audio au serveur
-        sendToServer(client, audioDataString)
+        sendToServer(client, JSON.encode({
+            command = "audio",
+            message = audioDataString})
+        )
     end
 end
 
