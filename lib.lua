@@ -206,7 +206,6 @@ function Lib:updateWorld(...)
 
         -- Envoyer les données audio au serveur
         sendToServer(client, audioDataString)
-        print(client, audioDataString)
     end
 end
 
