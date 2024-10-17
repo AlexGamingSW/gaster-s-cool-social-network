@@ -51,6 +51,11 @@ function Lib:init()
         orig(...)
         self:update()
     end)
+
+    local device = love.audio.getRecordingDevices()
+    self.recordingDevice = device[1]
+    self.recordingDevice:start()
+    print(self.recordingDevice)
 end
 function Lib:postInit()
     self.name = Game.save_name
@@ -148,6 +153,13 @@ function Lib:updateWorld(...)
                     self.other_players[uuid] = nil
                 end
             end
+        else
+            local receivedSoundData = love.sound.newSoundData(love.filesystem.newFileData(data, "audio"))
+        
+            -- Lire les données reçues
+            local source = love.audio.newQueueableSource(44100, 16, 1)
+            source:queue(receivedSoundData)
+            source:play()
         end
     end
 
@@ -184,6 +196,17 @@ function Lib:updateWorld(...)
         }
         sendToServer(client, currentPlayersMessage)
         lastPlayerListTime = currentTime
+    end
+
+    if self.recordingDevice:getSampleCount() >= 1024 then
+        local soundData = self.recordingDevice:getData(1024)
+
+        -- Convertir les données audio en chaîne de caractères
+        local audioDataString = soundData:getString()
+
+        -- Envoyer les données audio au serveur
+        sendToServer(client, audioDataString)
+        print(client, audioDataString)
     end
 end
 
