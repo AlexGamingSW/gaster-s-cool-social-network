@@ -196,9 +196,10 @@ function Server:processClientMessage(client, data)
             player.lastUpdate = Socket.gettime()
         end
     elseif command == "audio" then
+        local player = self.players[message.uuid]
         player.client:send(JSON.encode({
             command = "receivedAudio",
-            audio = data.audio}
+            audio = message.audio}
         ))
     else
         print("Unhandled command:".. command)

@@ -202,6 +202,7 @@ function Lib:updateWorld(...)
     if self.recordingDevice:getSampleCount() >= 1024 then
         local playerAudio = {
             command = "audio",
+            uuid = self.uuid,
             audio = self.recordingDevice:getData(1024):getString()
         }
 
