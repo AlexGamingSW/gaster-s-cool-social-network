@@ -196,11 +196,26 @@ function Server:processClientMessage(client, data)
             player.lastUpdate = Socket.gettime()
         end
     elseif command == "audio" then
-        local player = self.players[message.uuid]
-        player.client:send(JSON.encode({
-            command = "receivedAudio",
-            audio = message.audio}
-        ))
+        print("Received audio command")
+        --local player = self.players[message.uuid]
+        local decodedAudio = love.data.decode("string", "base64", message.audio)
+
+        local byteCount = #decodedAudio
+            
+        local sampleRate = 44100
+        local bitDepth = 16
+        local channels = 1
+            
+        local receivedSoundData = love.sound.newSoundData(byteCount / (bitDepth / 8), sampleRate, bitDepth, channels)
+            
+        for i = 0, receivedSoundData:getSampleCount() - 1 do
+            local sampleValue = love.data.unpack("h", decodedAudio, i * (bitDepth / 8) + 1) / 32768.0
+            receivedSoundData:setSample(i, sampleValue)
+        end
+
+        local source = love.audio.newQueueableSource(sampleRate, bitDepth, channels)
+        source:queue(receivedSoundData)
+        source:play()
     else
         print("Unhandled command:".. command)
         print(data)
