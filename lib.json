@@ -10,7 +10,7 @@
         "Various GitHub contributors"
     ],
     "config": {
-        "domain": "serveo.net",
+        "domain": "localhost",
         "port": 25574
     }
 }
